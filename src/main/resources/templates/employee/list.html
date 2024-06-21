@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách nhân viên</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách nhân viên</h1>
+
+    <form th:action="@{/employees}" method="get">
+        <div class="form-group">
+            <label for="departmentId">Phòng ban:</label>
+            <select id="departmentId" name="departmentId">
+                <option value="">Tất cả</option>
+                <option th:each="department : ${listDepartments}"
+                        th:value="${department.departmentId}"
+                        th:text="${department.departmentName}"
+                        th:selected="${department.departmentId == departmentId}"></option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="projectId">Dự án:</label>
+            <select id="projectId" name="projectId">
+                <option value="">Tất cả</option>
+                <option th:each="project : ${listProjects}"
+                        th:value="${project.projectId}"
+                        th:text="${project.projectName}"
+                        th:selected="${project.projectId == projectId}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Lọc</button>
+    </form>
+    <br>
+
+    <a th:href="@{/employees/new}" class="btn btn-primary">Thêm nhân viên mới</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Ngày sinh</th>
+            <th>Giới tính</th>
+            <th>Địa chỉ</th>
+            <th>Số điện thoại</th>
+            <th>Email</th>
+            <th>Chức vụ</th>
+            <th>Phòng ban</th>
+            <th>Dự án</th>
+            <th>Ngày bắt đầu</th>
+            <th>Loại hợp đồng</th>
+            <th>Lương</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${listEmployees}">
+            <td th:text="${employee.employeeId}"></td>
+            <td th:text="${employee.fullName}"></td>
+            <td th:text="${employee.dateOfBirth}"></td>
+            <td th:text="${employee.gender}"></td>
+            <td th:text="${employee.address}"></td>
+            <td th:text="${employee.phoneNumber}"></td>
+            <td th:text="${employee.email}"></td>
+            <td th:text="${employee.position}"></td>
+            <td th:text="${employee.department?.departmentName}"></td>
+            <td th:text="${employee.project?.projectName}"></td>
+            <td th:text="${employee.startDate}"></td>
+            <td th:text="${employee.contractType}"></td>
+            <td th:text="${employee.salary}"></td>
+            <td th:text="${employee.status}"></td>
+            <td>
+                <a th:href="@{/employees/edit/{id}(id=${employee.employeeId})}" class="btn btn-warning">Sửa</a>
+                <a th:href="@{/employees/delete/{id}(id=${employee.employeeId})}" class="btn btn-danger">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
