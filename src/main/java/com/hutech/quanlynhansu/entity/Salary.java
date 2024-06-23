@@ -22,4 +22,6 @@ public class Salary {
     private double bonus;
     private double deduction;
     private double netSalary;
+
+
 }

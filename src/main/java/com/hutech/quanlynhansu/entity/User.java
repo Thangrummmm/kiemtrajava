@@ -2,24 +2,31 @@ package com.hutech.quanlynhansu.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Entity
 @Table(name = "users")
 @Data
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId; // id tự động tăng không cần check null
+    private Long userId;
 
-    @OneToOne
-    @JoinColumn(name = "employee_id") // Liên kết one-to-one với entity Employee
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "employee_id", referencedColumnName = "employeeId")
     private Employee employee;
 
-    private String username; // Tên đăng nhập
-    private String password; // Mật khẩu (cần được mã hóa trước khi lưu trữ)
+    @NotBlank(message = "Tên đăng nhập không được để trống")
+    @Size(min = 3, max = 50, message = "Tên đăng nhập phải có từ 3 đến 50 ký tự")
+    private String username;
 
-    @NotBlank(message = "Role is mandatory") // Đảm bảo role không được để trống
-    private String role; // Vai trò (ví dụ: ADMIN, MANAGER, EMPLOYEE)
+    @NotBlank(message = "Mật khẩu không được để trống")
+    @Size(min = 6, message = "Mật khẩu phải có ít nhất 6 ký tự")
+    private String password;
+
+    @NotBlank(message = "Vai trò không được để trống")
+    private String role; // ADMIN, MANAGER, EMPLOYEE
+
 }
-

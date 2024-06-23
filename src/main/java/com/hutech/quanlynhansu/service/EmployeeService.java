@@ -2,6 +2,7 @@ package com.hutech.quanlynhansu.service;
 
 import com.hutech.quanlynhansu.entity.Employee;
 import com.hutech.quanlynhansu.repository.EmployeeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,10 @@ public class EmployeeService {
     }
 
     public Employee getEmployeeById(Long id) {
-        return employeeRepository.findById(id).orElse(null);
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy nhân viên với ID: " + id));
     }
+
 
     public Employee saveEmployee(Employee employee) {
         return employeeRepository.save(employee);

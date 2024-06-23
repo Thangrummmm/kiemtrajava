@@ -11,6 +11,7 @@
 <body>
 <div class="container">
     <h1>Chỉnh sửa nhân viên</h1>
+    <a th:href="@{/users/edit/{userId}(userId=${userId})}" class="btn btn-warning">Chỉnh sửa thông tin đăng nhập</a>
 
     <form th:action="@{/employees/update/{id}(id=${employee.employeeId})}" th:object="${employee}" method="post">
         <div class="form-group">
@@ -87,11 +88,13 @@
         <div class="form-group">
             <label for="status">Trạng thái:</label>
             <select class="form-control" id="status" th:field="*{status}">
-                <option th:value="Đang làm việc">Đang làm việc</option>
-                <option th:value="Nghỉ việc">Nghỉ việc</option>
-                <option th:value="Nghỉ phép">Nghỉ phép</option>
+                <option value="">Chọn trạng thái</option> <div th:if="${#fields.hasErrors('status')}" th:errors="*{status}" class="text-danger"></div>
+                <option th:value="'Đang làm việc'" th:selected="${employee.status == 'Đang làm việc'}">Đang làm việc</option>
+                <option th:value="'Nghỉ việc'" th:selected="${employee.status == 'Nghỉ việc'}">Nghỉ việc</option>
+                <option th:value="'Nghỉ phép'" th:selected="${employee.status == 'Nghỉ phép'}">Nghỉ phép</option>
             </select>
         </div>
+
 
         <button type="submit" class="btn btn-primary">Lưu</button>
     </form>

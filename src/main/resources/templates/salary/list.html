@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách lương</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+    <h1>Danh sách lương</h1>
+    <a th:href="@{/salaries/new}" class="btn btn-primary">Thêm mới</a>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nhân viên</th>
+            <th>Tháng</th>
+            <th>Năm</th>
+            <th>Lương cơ bản</th>
+            <th>Phụ cấp</th>
+            <th>Thưởng</th>
+            <th>Khấu trừ</th>
+            <th>Lương thực nhận</th>
+            <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="salary : ${listSalaries}">
+            <td th:text="${salary.salaryId}"></td>
+            <td th:text="${salary.employee.fullName}"></td>
+            <td th:text="${salary.month}"></td>
+            <td th:text="${salary.year}"></td>
+            <td th:text="${salary.basicSalary}"></td>
+            <td th:text="${salary.allowance}"></td>
+            <td th:text="${salary.bonus}"></td>
+            <td th:text="${salary.deduction}"></td>
+            <td th:text="${salary.netSalary}"></td>
+            <td>
+                <a th:href="@{/salaries/edit/{id}(id=${salary.salaryId})}" class="btn btn-warning">Sửa</a>
+                <a th:href="@{/salaries/delete/{id}(id=${salary.salaryId})}" class="btn btn-danger">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

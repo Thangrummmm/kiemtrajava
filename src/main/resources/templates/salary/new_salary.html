@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Thêm lương mới</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+  <h1>Thêm lương mới</h1>
+  <form th:action="@{/salaries/save}" th:object="${salary}" method="post">
+    <div class="form-group">
+      <label for="employee">Nhân viên:</label>
+      <select class="form-control" id="employee" th:field="*{employee}">
+        <option th:each="employee : ${listEmployees}" th:value="${employee.employeeId}"
+                th:text="${employee.fullName}"></option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="month">Tháng:</label>
+      <input type="number" class="form-control" id="month" th:field="*{month}">
+    </div>
+    <div class="form-group">
+      <label for="year">Năm:</label>
+      <input type="number" class="form-control" id="year" th:field="*{year}">
+    </div>
+    <div class="form-group">
+      <label for="basicSalary">Lương cơ bản:</label>
+      <input type="number" class="form-control" id="basicSalary" th:field="*{basicSalary}">
+    </div>
+    <div class="form-group">
+      <label for="allowance">Phụ cấp:</label>
+      <input type="number" class="form-control" id="allowance" th:field="*{allowance}">
+    </div>
+    <div class="form-group">
+      <label for="bonus">Thưởng:</label>
+      <input type="number" class="form-control" id="bonus" th:field="*{bonus}">
+    </div>
+    <div class="form-group">
+      <label for="deduction">Khấu trừ:</label>
+      <input type="number" class="form-control" id="deduction" th:field="*{deduction}">
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu</button>
+  </form>
+</div>
+</body>
+</html>
