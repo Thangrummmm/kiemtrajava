@@ -31,4 +31,6 @@ public class Employee {
     private String contractType;
     private double salary;
     private String status;
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL)
+    private User user;
 }

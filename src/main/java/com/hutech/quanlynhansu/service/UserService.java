@@ -2,6 +2,7 @@ package com.hutech.quanlynhansu.service;
 
 import com.hutech.quanlynhansu.entity.User;
 import com.hutech.quanlynhansu.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,8 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null); // Hoặc ném ngoại lệ nếu không tìm thấy
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy người dùng với ID: " + id));
     }
 
     public User getUserByUsername(String username) {
@@ -34,6 +36,9 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+    public User updateUser(User user) {
+        return userRepository.save(user);
     }
 
 

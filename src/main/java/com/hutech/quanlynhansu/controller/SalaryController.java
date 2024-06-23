@@ -4,12 +4,16 @@ import com.hutech.quanlynhansu.entity.Employee;
 import com.hutech.quanlynhansu.entity.Salary;
 import com.hutech.quanlynhansu.service.EmployeeService;
 import com.hutech.quanlynhansu.service.SalaryService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -17,6 +21,8 @@ import java.util.List;
 @RequestMapping("/salaries")
 @RequiredArgsConstructor
 public class SalaryController {
+
+    private final Logger logger = LoggerFactory.getLogger(SalaryController.class);
 
     private final SalaryService salaryService;
     private final EmployeeService employeeService;
@@ -36,32 +42,71 @@ public class SalaryController {
     }
 
     @PostMapping("/save")
-    public String saveSalary(@ModelAttribute("salary") @Valid Salary salary, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            model.addAttribute("listEmployees", employeeService.getAllEmployees());
-            return "salary/new_salary";
+    public String saveSalary(@ModelAttribute("salary") @Valid Salary salary, BindingResult result,
+                             RedirectAttributes redirectAttributes) {
+        try {
+            if (result.hasErrors()) {
+                redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.salary", result);
+                redirectAttributes.addFlashAttribute("salary", salary);
+                return "redirect:/salaries/new";
+            }
+
+            salaryService.saveSalary(salary);
+            redirectAttributes.addFlashAttribute("message", "Thêm lương thành công!");
+            return "redirect:/salaries";
+        } catch (Exception e) {
+            logger.error("Error saving salary", e);
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi thêm lương.");
+            return "redirect:/salaries/new";
         }
-        salaryService.saveSalary(salary);
-        return "redirect:/salaries";
     }
 
     @GetMapping("/edit/{id}")
     public String showEditSalaryForm(@PathVariable Long id, Model model) {
-        Salary salary = salaryService.getSalaryById(id);
-        model.addAttribute("salary", salary);
-        model.addAttribute("listEmployees", employeeService.getAllEmployees());
-        return "salary/edit_salary";
+        try {
+            Salary salary = salaryService.getSalaryById(id);
+            model.addAttribute("salary", salary);
+            model.addAttribute("listEmployees", employeeService.getAllEmployees());
+            return "salary/edit_salary";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("error", e.getMessage());
+            return "error";
+        }
     }
 
     @PostMapping("/update/{id}")
-    public String updateSalary(@PathVariable Long id, @ModelAttribute("salary") @Valid Salary salary, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            salary.setSalaryId(id);
-            model.addAttribute("listEmployees", employeeService.getAllEmployees());
-            return "salary/edit_salary";
+    public String updateSalary(@PathVariable Long id, @ModelAttribute("salary") @Valid Salary salary,
+                               BindingResult result, RedirectAttributes redirectAttributes) {
+        try {
+            if (result.hasErrors()) {
+                redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.salary", result);
+                redirectAttributes.addFlashAttribute("salary", salary);
+                return "redirect:/salaries/edit/" + id;
+            }
+
+            Salary existingSalary = salaryService.getSalaryById(id);
+            if (existingSalary == null) {
+                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thông tin lương.");
+                return "redirect:/salaries";
+            }
+
+            // Cập nhật thông tin lương
+            existingSalary.setEmployee(salary.getEmployee());
+            existingSalary.setMonth(salary.getMonth());
+            existingSalary.setYear(salary.getYear());
+            existingSalary.setBasicSalary(salary.getBasicSalary());
+            existingSalary.setAllowance(salary.getAllowance());
+            existingSalary.setBonus(salary.getBonus());
+            existingSalary.setDeduction(salary.getDeduction());
+
+            salaryService.saveSalary(existingSalary); // Lưu lại đối tượng đã cập nhật
+            redirectAttributes.addFlashAttribute("message", "Cập nhật lương thành công!");
+            return "redirect:/salaries";
+        } catch (Exception e) {
+            logger.error("Error updating salary with id " + id, e);
+            redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi cập nhật lương.");
+            return "redirect:/salaries/edit/" + id;
         }
-        salaryService.saveSalary(salary);
-        return "redirect:/salaries";
     }
 
     @GetMapping("/delete/{id}")
